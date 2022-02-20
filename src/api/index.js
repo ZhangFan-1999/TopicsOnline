@@ -1,7 +1,7 @@
 //线上接口地址： http://120.79.146.174:3000
 
 import axios from "axios"
-axios.defaults.baseURL = "https://120.79.146.174:3000"
+axios.defaults.baseURL = "www.zfanstudy.xyz"
 // 登录
 export function handleLogin(username,password){
   return axios.post("/login",{
