@@ -5,10 +5,10 @@
       <div class="content">
         <el-form :label-position="labelPosition">
           <el-form-item label="用户名">
-            <el-input ref="username" placeholder="输入用户名" v-model="username"></el-input>
+            <el-input ref="username" placeholder="输入用户名" v-model.trim="username"></el-input>
           </el-form-item>
           <el-form-item label="密码">
-            <el-input  ref="password" placeholder="输入密码" v-model="password" show-password></el-input>
+            <el-input  ref="password" placeholder="输入密码" v-model.trim="password" show-password></el-input>
           </el-form-item>
         </el-form>
         <el-button plain @click="_handleLogin">登录</el-button>
