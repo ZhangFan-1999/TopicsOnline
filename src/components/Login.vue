@@ -57,6 +57,7 @@ export default {
       })
     },
     _handleRegister(){
+      if(this.username&&this.password){
         handleRegister(this.username,this.password).then((res)=>{
         if(res.code==0){
            this.$message({
@@ -72,6 +73,13 @@ export default {
           });
         }
       })
+      }else{
+        this.$message({
+          message: '用户名或密码不能为空!',
+          type: 'error',
+          duration:'2000'
+        });
+      }
     },
     // 游客看看
     goIndex(){
