@@ -1,120 +1,119 @@
 <template>
-  <div class="wrap animated fadeIn">
-    <el-container>
-      <el-main>
-        <div class="input_box">
-          <span class="p" style="margin-bottom:8px">Believe In The Power Of Words</span>
-          <span class="p" style="font-size:22px;margin:8px 0px 20px 0px;">发布最近你遇到的那些值得分享的文字吧</span>
-          <el-input validate-event @input="validate" placeholder="请输入内容" v-model="input"></el-input>
-          <el-button :disabled='disabled' @click="_addTopic" type="primary" plain>发布</el-button>
-          <h1 class="info animated fadeIn" v-if="disabled">抱歉,请发布只包含文字的内容!</h1>
-        </div>
-      </el-main>
-    </el-container>
+  <div class="wrap">
+    <el-card class="box-card animated bounceInDown">
+      <h2 style="text-align:center">Welcome To My Site</h2>
+      <div class="content">
+        <el-form :label-position="labelPosition">
+          <el-form-item label="用户名">
+            <el-input ref="username" placeholder="输入用户名" v-model="username"></el-input>
+          </el-form-item>
+          <el-form-item label="密码">
+            <el-input  ref="password" placeholder="输入密码" v-model="password" show-password></el-input>
+          </el-form-item>
+        </el-form>
+        <el-button plain @click="_handleLogin">登录</el-button>
+        <el-button plain @click="_handleRegister">注册</el-button>
+      </div>
+      <span class="goIndex" @click="goIndex">我先看看→</span>
+    </el-card>
   </div>
 </template>
 <script>
-import {addTopic} from "@/api/index"
+import {handleLogin,handleRegister} from "@/api/index"
 import {mapGetters,mapActions} from "vuex"
 export default {
-  data(){ 
+  data(){
     return{
-      input:'',
-      disabled:false
-    }
-  },
-  computed:{
-    ...mapGetters([
-      'user'
-    ])
+      username:"",
+      password:"",
+      labelPosition:'top'
+    } 
   },
   methods:{
-    // 过滤掉非文字内容
-    validate(){
-      var pattern = /(\ud83c[\udf00-\udfff])|(\ud83d[\udc00-\ude4f\ude80-\udeff])|[\u2600-\u2B55]/gi
-      if(pattern.test(this.input)){
-        this.disabled=true
-        return false
-      }else{
-        this.disabled=false
-        return true
-      }
-    },
-    ...mapActions([]),
-    _addTopic(){
-      // 如果发送的内容为空就不调用api发送请求
-      var validator=Number(this.input)
-      if(this.user.username){
-        if(validator!==0&&this.validate()){
-          console.log("api");
-          addTopic(this.user.user_id,this.user.username,this.input,this.user.avator_url).then(res=>{
-            if(res.code==-2){
-              this.$alert('您的登录信息已失效,需要重新登录', '错误', {
-              confirmButtonText: '确定',
-              callback: action => {
-                this.$router.push("/login")
-              }
-            });
-            }else{
-              this.$notify({
-                title: '发布成功',
-                message: res.msg,
-                type: 'success',
-                offset: 100,
-                duration:2000
-                });
-                this.input=''
-              }
-          })
+     ...mapActions([
+      'setCurrentUser',
+      'setToken'
+    ]),
+    _handleLogin(){
+      handleLogin(this.username,this.password).then((res)=>{
+        if(res.code==0){
+          this.setCurrentUser(res.data)
+          this.setToken(res.data.token)
+           this.$router.push("/home")
+           this.$message({
+            message: '登录成功!',
+            type: 'success',
+            duration:1000,
+            offset:100
+          });
         }else{
-          this.$notify({
-            title: '发布失败',
-            message: '发布的内容不能为空!',
+          this.$message({
+            message: '账号或密码错误',
             type: 'error',
-            offset: 100,
-            duration:2000
+            duration:2000,
+            offset:20
           });
         }
+      })
+    },
+    _handleRegister(){
+      if(this.username&&this.password){
+        handleRegister(this.username,this.password).then((res)=>{
+        if(res.code==0){
+           this.$message({
+            message: res.msg,
+            type: 'success',
+            duration:'2000'
+          });
+        }else{
+          this.$message({
+            message: res.msg,
+            type: 'error',
+            duration:'2000'
+          });
+        }
+      })
       }else{
-        this.$notify({
-          title: '发布失败',
-          message: '请先登录!',
+        this.$message({
+          message: '用户名或密码不能为空!',
           type: 'error',
-          offset: 100,
-          duration:2000
+          duration:'2000'
         });
       }
+    },
+    // 游客看看
+    goIndex(){
+      this.$router.push("/home/index")
     }
-  }
+  },
 }
 </script>
 <style scoped>
-.info{
+.goIndex{
+  display:block;
+  float: right;
   font-size: 14px;
-  font-weight: lighter;
-  color: #f56c6c;
-}
-.input_box>>>.el-input{
-  width: 85%;
-}
-.p{
-  display: block;
-  margin: 40px 0;
-  text-align: center;
-  font-size: 32px;
-  color: rgb(194, 193, 193);
-  font-weight: 80;
-}
-.input_box{
-  width: 700px;
-  height: 220px;
-  position: absolute;
-  left: 50%;
-  top: 35%;
-  transform: translateX(-50%);
+  color: #409eff;
+  margin-bottom: 20px;
+  cursor: pointer;
 }
 .wrap{
   width: 100%;
   height: 100%;
+  overflow: hidden;
+  background-color: #f6f8fa;
 }
+.wrap>>>.box-card{
+  width: 60%;
+  margin-top: 90px;
+  margin-left: 20%;
+  border-radius: 0%;
+}
+.content{
+  margin-top: 10%;
+  border-radius:5px;
+  margin-left: 50%; 
+  transform: translateX(-50%);
+}
+
 </style>
