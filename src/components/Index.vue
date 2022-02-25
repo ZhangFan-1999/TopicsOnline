@@ -1,7 +1,7 @@
 <template>
   <div class="wrap">
     <el-card class="box-card animated bounceInDown">
-      <h2 style="text-align:center">Welcome To My Site</h2>
+      <h2 style="text-align:center">Welcome To My Site</h2> 
       <div class="content">
         <el-form :label-position="labelPosition">
           <el-form-item label="用户名">
